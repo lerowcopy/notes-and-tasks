@@ -1,0 +1,32 @@
+<resources>
+    <string name="tasks_screen_title">Задачи</string>
+    <string name="tasks_load_error">Не удалось загрузить задачи</string>
+    <string name="tasks_empty">Задач пока нет</string>
+    <string name="tasks_empty_search">По вашему запросу задачи не найдены</string>
+
+    <string name="tasks_filter_all">Все</string>
+    <string name="tasks_filter_active">Активные</string>
+    <string name="tasks_filter_completed">Выполненные</string>
+    <string name="tasks_sort_content_description">Сортировка задач</string>
+    <string name="tasks_sort_newest">Сначала новые</string>
+    <string name="tasks_sort_oldest">Сначала старые</string>
+    <string name="tasks_status_active">Активная</string>
+    <string name="tasks_status_completed">Выполненная</string>
+
+    <string name="tasks_text_entry_label">Новая задача</string>
+    <string name="tasks_text_entry_error">Введите название задачи</string>
+    <string name="tasks_save_content_description">Сохранить задачу</string>
+    <string name="tasks_create_text">Текст</string>
+    <string name="tasks_create_voice">Голос</string>
+    <string name="tasks_create_text_content_description">Создать задачу текстом</string>
+    <string name="tasks_create_voice_content_description">Создать задачу голосом</string>
+    <string name="tasks_fab_open_content_description">Открыть способы создания задачи</string>
+    <string name="tasks_fab_close_content_description">Закрыть способы создания задачи</string>
+
+    <string name="tasks_voice_recording">Идёт запись голосовой задачи</string>
+    <string name="tasks_voice_processing">Распознаём и уточняем задачу</string>
+    <string name="tasks_voice_error">Не удалось создать задачу голосом</string>
+    <string name="tasks_stop_voice_content_description">Остановить запись голосовой задачи</string>
+    <string name="tasks_operation_error">Не удалось обновить задачу</string>
+    <string name="tasks_dismiss_error_content_description">Скрыть сообщение об ошибке</string>
+</resources>
