@@ -1,0 +1,26 @@
+# Local Android SDK and developer-specific configuration
+local.properties
+
+# Secret-bearing local configuration files
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+secrets.properties
+**/secrets.properties
+
+# Gradle and build output
+.gradle/
+**/build/
+
+# Android Studio and IntelliJ IDEA
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+
+# OS files
+.DS_Store
+Thumbs.db
