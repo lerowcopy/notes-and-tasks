@@ -10,7 +10,11 @@ object OkHttpClientFactory {
 
     fun create(
         isDebug: Boolean = BuildConfig.DEBUG,
-    ): OkHttpClient = OkHttpClient.Builder()
+    ): OkHttpClient = createBuilder(isDebug).build()
+
+    fun createBuilder(
+        isDebug: Boolean = BuildConfig.DEBUG,
+    ): OkHttpClient.Builder = OkHttpClient.Builder()
         .connectTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .writeTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
@@ -23,5 +27,4 @@ object OkHttpClientFactory {
                 }
             },
         )
-        .build()
 }
