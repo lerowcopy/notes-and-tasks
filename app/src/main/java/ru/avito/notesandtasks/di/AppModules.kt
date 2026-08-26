@@ -20,6 +20,9 @@ import ru.avito.notesandtasks.core.datastore.createUserSettingsRepository
 import ru.avito.notesandtasks.core.gigachat.client.GigaChatClient
 import ru.avito.notesandtasks.core.gigachat.client.GigaChatClientFactory
 import ru.avito.notesandtasks.core.network.result.ApiResult
+import ru.avito.notesandtasks.core.voice.auth.SaluteSpeechBuildConfigCredentials
+import ru.avito.notesandtasks.core.voice.auth.SaluteSpeechConfigurationException
+import ru.avito.notesandtasks.core.voice.recognition.SaluteSpeechRecognizerFactory
 import ru.avito.notesandtasks.core.voice.recognition.SpeechRecognizer
 import ru.avito.notesandtasks.core.voice.recording.VoiceRecorder
 import ru.avito.notesandtasks.feature.notes.data.NotesRepositoryImpl
@@ -92,13 +95,14 @@ object AppProvidersModule {
 
     @Provides
     @Singleton
-    fun provideSpeechRecognizer(): SpeechRecognizer = UnavailableSpeechRecognizer
+    fun provideSpeechRecognizer(): SpeechRecognizer = SaluteSpeechBuildConfigCredentials
+        .readOrNull()
+        ?.let(SaluteSpeechRecognizerFactory::create)
+        ?: UnavailableSpeechRecognizer
 }
 
 private object UnavailableSpeechRecognizer : SpeechRecognizer {
     override suspend fun recognize(file: File): ApiResult<String> = ApiResult.UnknownError(
-        cause = SpeechRecognitionConfigurationException,
+        cause = SaluteSpeechConfigurationException,
     )
 }
-
-private data object SpeechRecognitionConfigurationException : IllegalStateException()

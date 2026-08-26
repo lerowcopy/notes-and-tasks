@@ -24,6 +24,9 @@
     <string name="note_editor_stop_recording">Остановить запись</string>
     <string name="note_editor_voice_processing">Распознаём голосовую запись</string>
     <string name="note_editor_voice_error">Не удалось обработать голосовую запись</string>
+    <string name="note_editor_voice_configuration_error">Настройте ключ SaluteSpeech в local.properties и повторите попытку</string>
+    <string name="note_editor_voice_network_error">Проверьте подключение к интернету и повторите голосовой ввод</string>
+    <string name="note_editor_voice_http_error">Ошибка сервиса распознавания: %1$d</string>
     <string name="note_editor_clear_voice_error_content_description">Скрыть сообщение об ошибке голосового ввода</string>
     <string name="note_editor_save">Сохранить</string>
     <string name="note_editor_save_error">Не удалось сохранить заметку</string>

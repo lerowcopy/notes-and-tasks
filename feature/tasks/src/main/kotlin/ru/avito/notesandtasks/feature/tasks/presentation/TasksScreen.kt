@@ -1,6 +1,7 @@
 package ru.avito.notesandtasks.feature.tasks.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import java.io.IOException
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -69,9 +70,11 @@ import ru.avito.notesandtasks.core.ui.components.ErrorView
 import ru.avito.notesandtasks.core.ui.components.LoadingIndicator
 import ru.avito.notesandtasks.core.ui.components.SearchTopBar
 import ru.avito.notesandtasks.core.ui.theme.Spacing
+import ru.avito.notesandtasks.core.voice.auth.SaluteSpeechConfigurationException
 import ru.avito.notesandtasks.feature.tasks.R
 import ru.avito.notesandtasks.feature.tasks.domain.model.Task
 import ru.avito.notesandtasks.feature.tasks.domain.model.TaskStatusFilter
+import ru.avito.notesandtasks.feature.tasks.domain.usecase.VoiceTaskHttpException
 
 @Composable
 fun TasksRoute(
@@ -513,10 +516,18 @@ private fun BoxScope.TaskFeedbackOverlay(
 
         is VoiceTaskState.Error -> TaskErrorSurface(
             modifier = Modifier.align(Alignment.BottomCenter),
-            message = stringResource(R.string.tasks_voice_error),
+            message = voiceErrorMessage(voiceState.cause),
             onDismiss = onClearVoiceError,
         )
     }
+}
+
+@Composable
+private fun voiceErrorMessage(cause: Throwable): String = when (cause) {
+    SaluteSpeechConfigurationException -> stringResource(R.string.tasks_voice_configuration_error)
+    is VoiceTaskHttpException -> stringResource(R.string.tasks_voice_http_error, cause.code)
+    is IOException -> stringResource(R.string.tasks_voice_network_error)
+    else -> stringResource(R.string.tasks_voice_error)
 }
 
 @Composable

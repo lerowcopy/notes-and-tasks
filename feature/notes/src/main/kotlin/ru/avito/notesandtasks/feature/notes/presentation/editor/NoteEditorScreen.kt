@@ -1,6 +1,7 @@
 package ru.avito.notesandtasks.feature.notes.presentation.editor
 
 import androidx.compose.foundation.layout.Arrangement
+import java.io.IOException
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,6 +47,7 @@ import ru.avito.notesandtasks.core.permissions.PermissionStateBanner
 import ru.avito.notesandtasks.core.permissions.rememberPermissionRequestController
 import ru.avito.notesandtasks.core.ui.components.LoadingIndicator
 import ru.avito.notesandtasks.core.ui.theme.Spacing
+import ru.avito.notesandtasks.core.voice.auth.SaluteSpeechConfigurationException
 import ru.avito.notesandtasks.feature.notes.R
 
 @Composable
@@ -214,7 +216,7 @@ fun NoteEditorScreen(
                 VoiceInputSection(
                     isRecording = uiState.isVoiceRecording,
                     isProcessing = uiState.isVoiceProcessing,
-                    hasError = uiState.voiceError != null,
+                    voiceError = uiState.voiceError,
                     microphonePermissionState = microphonePermission.state,
                     onRequestMicrophonePermission = microphonePermission::request,
                     onStartRecording = onStartVoiceRecording,
@@ -253,7 +255,7 @@ fun NoteEditorScreen(
 private fun VoiceInputSection(
     isRecording: Boolean,
     isProcessing: Boolean,
-    hasError: Boolean,
+    voiceError: Throwable?,
     microphonePermissionState: PermissionState,
     onRequestMicrophonePermission: () -> Unit,
     onStartRecording: () -> Unit,
@@ -296,13 +298,13 @@ private fun VoiceInputSection(
                 )
             }
         }
-        if (hasError) {
+        if (voiceError != null) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Spacing.small),
             ) {
                 Text(
-                    text = stringResource(R.string.note_editor_voice_error),
+                    text = voiceErrorMessage(voiceError),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.weight(1f),
                 )
@@ -315,4 +317,12 @@ private fun VoiceInputSection(
             }
         }
     }
+}
+
+@Composable
+private fun voiceErrorMessage(cause: Throwable): String = when (cause) {
+    SaluteSpeechConfigurationException -> stringResource(R.string.note_editor_voice_configuration_error)
+    is VoiceRecognitionHttpException -> stringResource(R.string.note_editor_voice_http_error, cause.code)
+    is IOException -> stringResource(R.string.note_editor_voice_network_error)
+    else -> stringResource(R.string.note_editor_voice_error)
 }

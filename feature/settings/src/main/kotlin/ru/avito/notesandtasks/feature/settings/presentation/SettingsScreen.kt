@@ -1,6 +1,7 @@
 package ru.avito.notesandtasks.feature.settings.presentation
 
 import androidx.compose.foundation.clickable
+import java.io.IOException
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +39,7 @@ import ru.avito.notesandtasks.core.ui.components.LoadingIndicator
 import ru.avito.notesandtasks.core.ui.theme.Spacing
 import ru.avito.notesandtasks.core.ui.theme.colorScheme
 import ru.avito.notesandtasks.feature.settings.R
+import ru.avito.notesandtasks.feature.settings.data.BalanceHttpException
 
 @Composable
 fun SettingsRoute(
@@ -198,7 +200,7 @@ private fun BalanceCard(
 
                 is BalanceUiState.Error -> {
                     Text(
-                        text = stringResource(R.string.settings_balance_error),
+                        text = balanceErrorMessage(balanceState.cause),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -210,6 +212,20 @@ private fun BalanceCard(
         }
     }
 }
+
+@Composable
+private fun balanceErrorMessage(cause: Throwable): String = when (cause) {
+    is BalanceHttpException -> if (cause.code == HTTP_FORBIDDEN) {
+        stringResource(R.string.settings_balance_forbidden)
+    } else {
+        stringResource(R.string.settings_balance_http_error, cause.code)
+    }
+
+    is IOException -> stringResource(R.string.settings_balance_network_error)
+    else -> stringResource(R.string.settings_balance_error)
+}
+
+private const val HTTP_FORBIDDEN = 403
 
 @Composable
 private fun ThemeSection(

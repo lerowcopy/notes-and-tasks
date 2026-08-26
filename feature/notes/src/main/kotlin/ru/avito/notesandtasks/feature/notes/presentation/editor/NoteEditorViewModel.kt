@@ -96,7 +96,11 @@ class NoteEditorViewModel @Inject constructor(
             }
 
             is OperationResult.Error -> updateState {
-                copy(isVoiceRecording = false, isVoiceProcessing = false, voiceError = result.cause)
+                copy(
+                    isVoiceRecording = false,
+                    isVoiceProcessing = false,
+                    voiceError = result.cause ?: VoiceRecognitionFailedException,
+                )
             }
         }
     }
@@ -105,7 +109,11 @@ class NoteEditorViewModel @Inject constructor(
         when (val result = voiceRecorder.stop()) {
             is OperationResult.Success -> recognizeVoice(File(result.data))
             is OperationResult.Error -> updateState {
-                copy(isVoiceRecording = false, isVoiceProcessing = false, voiceError = result.cause)
+                copy(
+                    isVoiceRecording = false,
+                    isVoiceProcessing = false,
+                    voiceError = result.cause ?: VoiceRecognitionFailedException,
+                )
             }
         }
     }
@@ -229,13 +237,23 @@ class NoteEditorViewModel @Inject constructor(
                     }
 
                     is ApiResult.NetworkError -> updateState {
-                        copy(isVoiceProcessing = false, voiceError = result.cause)
+                        copy(
+                            isVoiceProcessing = false,
+                            voiceError = result.cause,
+                        )
                     }
 
                     is ApiResult.UnknownError -> updateState {
-                        copy(isVoiceProcessing = false, voiceError = result.cause)
+                        copy(
+                            isVoiceProcessing = false,
+                            voiceError = result.cause,
+                        )
                     }
                 }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Throwable) {
+                updateState { copy(isVoiceProcessing = false, voiceError = error) }
             } finally {
                 audioFile.delete()
             }
@@ -265,6 +283,8 @@ private fun appendTranscript(currentText: String, transcript: String): String = 
 } else {
     currentText + "\n" + transcript
 }
+
+data object VoiceRecognitionFailedException : IllegalStateException()
 
 class VoiceRecognitionHttpException(
     val code: Int,

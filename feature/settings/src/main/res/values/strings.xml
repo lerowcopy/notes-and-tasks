@@ -9,6 +9,9 @@
     <string name="settings_balance_entry">%1$s: %2$d</string>
     <string name="settings_balance_refresh">Обновить баланс</string>
     <string name="settings_balance_error">Не удалось загрузить баланс</string>
+    <string name="settings_balance_forbidden">Баланс недоступен для текущего тарифа GigaChat</string>
+    <string name="settings_balance_http_error">Ошибка сервиса GigaChat: %1$d</string>
+    <string name="settings_balance_network_error">Проверьте подключение к интернету и повторите запрос</string>
     <string name="settings_balance_retry">Повторить запрос</string>
 
     <string name="settings_theme_title">Тема</string>

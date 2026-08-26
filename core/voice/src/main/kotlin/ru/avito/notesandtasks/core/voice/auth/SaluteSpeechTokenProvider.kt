@@ -1,6 +1,7 @@
 package ru.avito.notesandtasks.core.voice.auth
 
 import java.util.UUID
+import ru.avito.notesandtasks.core.voice.BuildConfig
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ru.avito.notesandtasks.core.network.result.ApiResult
@@ -22,6 +23,20 @@ enum class SaluteSpeechScope(
     CORPORATE_PREPAID("SALUTE_SPEECH_B2B"),
 }
 
+object SaluteSpeechBuildConfigCredentials {
+    fun readOrNull(): SaluteSpeechCredentials? {
+        val authorizationKey = BuildConfig.SALUTE_SPEECH_AUTH_KEY
+        val scope = SaluteSpeechScope.entries.firstOrNull {
+            it.value == BuildConfig.SALUTE_SPEECH_SCOPE
+        }
+        return authorizationKey.takeIf(String::isNotBlank)?.let { key ->
+            scope?.let { SaluteSpeechCredentials(authorizationKey = key, scope = it) }
+        }
+    }
+}
+
+data object SaluteSpeechConfigurationException : IllegalStateException()
+
 internal class SaluteSpeechTokenProvider(
     private val api: SaluteSpeechAuthApi,
     private val credentials: SaluteSpeechCredentials,
@@ -31,6 +46,9 @@ internal class SaluteSpeechTokenProvider(
     private var cachedToken: CachedAccessToken? = null
 
     suspend fun accessToken(): ApiResult<String> = mutex.withLock {
+        if (credentials.authorizationKey.isBlank() || credentials.scope.value.isBlank()) {
+            return@withLock ApiResult.UnknownError(cause = SaluteSpeechConfigurationException)
+        }
         cachedToken
             ?.takeIf(::isUsable)
             ?.let { return@withLock ApiResult.Success(it.value) }
@@ -46,7 +64,7 @@ internal class SaluteSpeechTokenProvider(
         ) {
             is ApiResult.Success -> {
                 if (result.data.accessToken.isBlank()) {
-                    ApiResult.UnknownError(cause = IllegalStateException())
+                    ApiResult.UnknownError(cause = SaluteSpeechConfigurationException)
                 } else {
                     cachedToken = CachedAccessToken(
                         value = result.data.accessToken,
