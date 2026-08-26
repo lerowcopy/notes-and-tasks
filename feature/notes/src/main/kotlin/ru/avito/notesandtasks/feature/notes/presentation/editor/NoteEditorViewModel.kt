@@ -1,6 +1,8 @@
 package ru.avito.notesandtasks.feature.notes.presentation.editor
 
 import androidx.lifecycle.SavedStateHandle
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import java.io.File
@@ -39,15 +41,15 @@ enum class NoteEditorSaveError {
     SaveFailed,
 }
 
-class NoteEditorViewModel(
-    private val noteId: Long?,
+@HiltViewModel
+class NoteEditorViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getNoteUseCase: GetNoteUseCase,
     private val saveNoteUseCase: SaveNoteUseCase,
     private val voiceRecorder: VoiceRecorder,
-    private val speechRecognizer: SpeechRecognizer?,
-    private val currentTimeMillis: () -> Long = System::currentTimeMillis,
+    private val speechRecognizer: SpeechRecognizer,
 ) : ViewModel() {
+    private val noteId: Long? = savedStateHandle[STATE_NOTE_ID]
     private val mutableUiState = MutableStateFlow(initialState())
 
     val uiState: StateFlow<NoteEditorUiState> = mutableUiState.asStateFlow()
@@ -170,7 +172,7 @@ class NoteEditorViewModel(
         title = savedStateHandle[STATE_TITLE] ?: "",
         text = savedStateHandle[STATE_TEXT] ?: "",
         imagePath = savedStateHandle[STATE_IMAGE_PATH],
-        createdAt = savedStateHandle[STATE_CREATED_AT] ?: currentTimeMillis(),
+        createdAt = savedStateHandle[STATE_CREATED_AT] ?: System.currentTimeMillis(),
     )
 
     private fun loadExistingNoteIfNeeded() {
@@ -206,23 +208,10 @@ class NoteEditorViewModel(
         savedStateHandle.contains(STATE_IMAGE_PATH)
 
     private fun recognizeVoice(audioFile: File) {
-        val recognizer = speechRecognizer
-        if (recognizer == null) {
-            audioFile.delete()
-            updateState {
-                copy(
-                    isVoiceRecording = false,
-                    isVoiceProcessing = false,
-                    voiceError = VoiceRecognitionUnavailableException,
-                )
-            }
-            return
-        }
-
         viewModelScope.launch {
             updateState { copy(isVoiceRecording = false, isVoiceProcessing = true, voiceError = null) }
             try {
-                when (val result = recognizer.recognize(audioFile)) {
+                when (val result = speechRecognizer.recognize(audioFile)) {
                     is ApiResult.Success -> updateState {
                         copy(
                             text = appendTranscript(text, result.data),
@@ -263,6 +252,7 @@ class NoteEditorViewModel(
     }
 
     private companion object {
+        const val STATE_NOTE_ID = "noteId"
         const val STATE_TITLE = "note_editor_title"
         const val STATE_TEXT = "note_editor_text"
         const val STATE_IMAGE_PATH = "note_editor_image_path"
@@ -275,8 +265,6 @@ private fun appendTranscript(currentText: String, transcript: String): String = 
 } else {
     currentText + "\n" + transcript
 }
-
-data object VoiceRecognitionUnavailableException : IllegalStateException()
 
 class VoiceRecognitionHttpException(
     val code: Int,

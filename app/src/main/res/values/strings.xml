@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Notes &amp; Tasks</string>
-    <string name="hello_world">Hello World</string>
+    <string name="tab_notes">Заметки</string>
+    <string name="tab_tasks">Задачи</string>
+    <string name="tab_settings">Настройки</string>
 </resources>

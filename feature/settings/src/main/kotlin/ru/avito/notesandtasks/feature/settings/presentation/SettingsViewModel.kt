@@ -1,6 +1,8 @@
 package ru.avito.notesandtasks.feature.settings.presentation
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -42,7 +44,8 @@ sealed interface BalanceUiState {
     ) : BalanceUiState
 }
 
-class SettingsViewModel(
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
     private val getUserSettingsUseCase: GetUserSettingsUseCase,
     private val setThemeModeUseCase: SetThemeModeUseCase,
     private val setAccentColorUseCase: SetAccentColorUseCase,

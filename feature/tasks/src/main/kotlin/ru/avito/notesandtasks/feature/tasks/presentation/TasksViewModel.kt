@@ -1,6 +1,8 @@
 package ru.avito.notesandtasks.feature.tasks.presentation
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import java.io.File
 import kotlinx.coroutines.CancellationException
@@ -57,11 +59,12 @@ sealed interface VoiceTaskState {
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TasksViewModel(
+@HiltViewModel
+class TasksViewModel @Inject constructor(
     private val getTasksUseCase: GetTasksUseCase,
     private val toggleTaskStatusUseCase: ToggleTaskStatusUseCase,
     private val createTaskUseCase: CreateTaskUseCase,
-    private val createTaskFromVoiceUseCase: CreateTaskFromVoiceUseCase?,
+    private val createTaskFromVoiceUseCase: CreateTaskFromVoiceUseCase,
     private val voiceRecorder: VoiceRecorder,
 ) : ViewModel() {
     private val submittedQuery = MutableStateFlow("")
@@ -215,17 +218,10 @@ class TasksViewModel(
     }
 
     private fun createTaskFromVoice(audioFile: File) {
-        val useCase = createTaskFromVoiceUseCase
-        if (useCase == null) {
-            audioFile.delete()
-            updateState { copy(voiceState = VoiceTaskState.Error(VoiceTaskCreationUnavailableException)) }
-            return
-        }
-
         viewModelScope.launch {
             updateState { copy(voiceState = VoiceTaskState.Processing) }
             try {
-                when (val result = useCase(audioFile)) {
+                when (val result = createTaskFromVoiceUseCase(audioFile)) {
                     is OperationResult.Success -> updateState { copy(voiceState = VoiceTaskState.Idle) }
                     is OperationResult.Error -> updateState {
                         copy(voiceState = VoiceTaskState.Error(result.cause ?: VoiceTaskCreationFailedException))
@@ -245,8 +241,6 @@ class TasksViewModel(
         mutableUiState.value = mutableUiState.value.transform()
     }
 }
-
-data object VoiceTaskCreationUnavailableException : IllegalStateException()
 
 data object VoiceTaskCreationFailedException : IllegalStateException()
 

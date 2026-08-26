@@ -1,5 +1,6 @@
 package ru.avito.notesandtasks.feature.settings.domain.usecase
 
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import ru.avito.notesandtasks.core.common.result.OperationResult
 import ru.avito.notesandtasks.core.common.settings.AccentColor
@@ -9,13 +10,13 @@ import ru.avito.notesandtasks.core.datastore.UserSettings
 import ru.avito.notesandtasks.core.gigachat.client.BalanceEntry
 import ru.avito.notesandtasks.feature.settings.domain.repository.SettingsRepository
 
-class GetUserSettingsUseCase(
+class GetUserSettingsUseCase @Inject constructor(
     private val repository: SettingsRepository,
 ) : UseCase<Unit, Flow<UserSettings>> {
     override suspend fun invoke(parameters: Unit): Flow<UserSettings> = repository.userSettings
 }
 
-class SetThemeModeUseCase(
+class SetThemeModeUseCase @Inject constructor(
     private val repository: SettingsRepository,
 ) : UseCase<ThemeMode, Unit> {
     override suspend fun invoke(parameters: ThemeMode) {
@@ -23,7 +24,7 @@ class SetThemeModeUseCase(
     }
 }
 
-class SetAccentColorUseCase(
+class SetAccentColorUseCase @Inject constructor(
     private val repository: SettingsRepository,
 ) : UseCase<AccentColor, Unit> {
     override suspend fun invoke(parameters: AccentColor) {
@@ -31,7 +32,7 @@ class SetAccentColorUseCase(
     }
 }
 
-class ResetSettingsUseCase(
+class ResetSettingsUseCase @Inject constructor(
     private val repository: SettingsRepository,
 ) : UseCase<Unit, Unit> {
     override suspend fun invoke(parameters: Unit) {
@@ -39,7 +40,7 @@ class ResetSettingsUseCase(
     }
 }
 
-class GetGigaChatBalanceUseCase(
+class GetGigaChatBalanceUseCase @Inject constructor(
     private val repository: SettingsRepository,
 ) : UseCase<Unit, OperationResult<List<BalanceEntry>>> {
     override suspend fun invoke(parameters: Unit): OperationResult<List<BalanceEntry>> = repository.getBalance()

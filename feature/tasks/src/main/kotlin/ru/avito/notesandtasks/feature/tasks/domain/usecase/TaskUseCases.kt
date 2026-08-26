@@ -1,6 +1,7 @@
 package ru.avito.notesandtasks.feature.tasks.domain.usecase
 
 import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.avito.notesandtasks.core.common.flow.SortOrder
@@ -20,7 +21,7 @@ data class GetTasksParams(
     val sortOrder: SortOrder,
 )
 
-class GetTasksUseCase(
+class GetTasksUseCase @Inject constructor(
     private val repository: TasksRepository,
 ) : UseCase<GetTasksParams, Flow<List<Task>>> {
     override suspend fun invoke(parameters: GetTasksParams): Flow<List<Task>> = repository
@@ -36,7 +37,7 @@ class GetTasksUseCase(
         }
 }
 
-class ToggleTaskStatusUseCase(
+class ToggleTaskStatusUseCase @Inject constructor(
     private val repository: TasksRepository,
 ) : UseCase<ToggleTaskStatusParams, OperationResult<Unit>> {
     override suspend fun invoke(parameters: ToggleTaskStatusParams): OperationResult<Unit> =
@@ -46,9 +47,8 @@ class ToggleTaskStatusUseCase(
         )
 }
 
-class CreateTaskUseCase(
+class CreateTaskUseCase @Inject constructor(
     private val repository: TasksRepository,
-    private val currentTimeMillis: () -> Long = System::currentTimeMillis,
 ) : UseCase<String, OperationResult<Long>> {
     override suspend fun invoke(parameters: String): OperationResult<Long> {
         val title = parameters.trim()
@@ -60,13 +60,13 @@ class CreateTaskUseCase(
                 id = 0,
                 title = title,
                 isCompleted = false,
-                createdAt = currentTimeMillis(),
+                createdAt = System.currentTimeMillis(),
             ),
         )
     }
 }
 
-class CreateTaskFromVoiceUseCase(
+class CreateTaskFromVoiceUseCase @Inject constructor(
     private val speechRecognizer: SpeechRecognizer,
     private val gigaChatClient: GigaChatClient,
     private val createTaskUseCase: CreateTaskUseCase,

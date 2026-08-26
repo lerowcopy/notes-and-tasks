@@ -1,5 +1,6 @@
 package ru.avito.notesandtasks.feature.settings.data
 
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import ru.avito.notesandtasks.core.common.result.OperationResult
 import ru.avito.notesandtasks.core.common.settings.AccentColor
@@ -11,7 +12,7 @@ import ru.avito.notesandtasks.core.gigachat.client.GigaChatClient
 import ru.avito.notesandtasks.core.network.result.ApiResult
 import ru.avito.notesandtasks.feature.settings.domain.repository.SettingsRepository
 
-class SettingsRepositoryImpl(
+class SettingsRepositoryImpl @Inject constructor(
     private val userSettingsRepository: UserSettingsRepository,
     private val gigaChatClient: GigaChatClient,
 ) : SettingsRepository {

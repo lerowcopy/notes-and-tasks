@@ -1,5 +1,6 @@
 package ru.avito.notesandtasks.feature.tasks.data
 
+import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,7 +13,7 @@ import ru.avito.notesandtasks.core.database.entity.TaskEntity
 import ru.avito.notesandtasks.feature.tasks.domain.model.Task
 import ru.avito.notesandtasks.feature.tasks.domain.repository.TasksRepository
 
-class TasksRepositoryImpl(
+class TasksRepositoryImpl @Inject constructor(
     private val taskDao: TaskDao,
     private val dispatchers: DispatcherProvider,
 ) : TasksRepository {

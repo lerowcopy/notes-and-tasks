@@ -1,6 +1,8 @@
 package ru.avito.notesandtasks.feature.notes.presentation.list
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -30,7 +32,8 @@ data class NotesListUiState(
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class NotesListViewModel(
+@HiltViewModel
+class NotesListViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase,
 ) : ViewModel() {

@@ -1,5 +1,6 @@
 package ru.avito.notesandtasks.feature.notes.domain.usecase
 
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import ru.avito.notesandtasks.core.common.flow.SortOrder
 import ru.avito.notesandtasks.core.common.result.OperationResult
@@ -13,7 +14,7 @@ data class GetNotesParams(
     val sortOrder: SortOrder,
 )
 
-class GetNotesUseCase(
+class GetNotesUseCase @Inject constructor(
     private val repository: NotesRepository,
 ) : UseCase<GetNotesParams, Flow<List<Note>>> {
     override suspend fun invoke(parameters: GetNotesParams): Flow<List<Note>> =
@@ -23,13 +24,13 @@ class GetNotesUseCase(
         )
 }
 
-class GetNoteUseCase(
+class GetNoteUseCase @Inject constructor(
     private val repository: NotesRepository,
 ) : UseCase<Long, Flow<Note?>> {
     override suspend fun invoke(parameters: Long): Flow<Note?> = repository.observeNote(parameters)
 }
 
-class SaveNoteUseCase(
+class SaveNoteUseCase @Inject constructor(
     private val repository: NotesRepository,
 ) : UseCase<NoteDraft, OperationResult<Long>> {
     override suspend fun invoke(parameters: NoteDraft): OperationResult<Long> {
@@ -50,7 +51,7 @@ class SaveNoteUseCase(
     }
 }
 
-class DeleteNoteUseCase(
+class DeleteNoteUseCase @Inject constructor(
     private val repository: NotesRepository,
 ) : UseCase<Long, OperationResult<Unit>> {
     override suspend fun invoke(parameters: Long): OperationResult<Unit> = repository.delete(parameters)
