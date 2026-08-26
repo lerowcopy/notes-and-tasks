@@ -1,0 +1,22 @@
+<resources>
+    <string name="settings_screen_title">Настройки</string>
+    <string name="settings_load_error">Не удалось загрузить настройки</string>
+
+    <string name="settings_balance_title">Баланс GigaChat</string>
+    <string name="settings_balance_idle">Баланс ещё не запрошен</string>
+    <string name="settings_balance_loading">Загружаем баланс</string>
+    <string name="settings_balance_empty">Данные баланса отсутствуют</string>
+    <string name="settings_balance_entry">%1$s: %2$d</string>
+    <string name="settings_balance_refresh">Обновить баланс</string>
+    <string name="settings_balance_error">Не удалось загрузить баланс</string>
+    <string name="settings_balance_retry">Повторить запрос</string>
+
+    <string name="settings_theme_title">Тема</string>
+    <string name="settings_theme_system">Системная</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Тёмная</string>
+    <string name="settings_accent_title">Акцентный цвет</string>
+    <string name="settings_reset">Сбросить настройки</string>
+    <string name="settings_operation_error">Не удалось сохранить настройки</string>
+    <string name="settings_dismiss_error">Скрыть</string>
+</resources>
