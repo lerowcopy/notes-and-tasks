@@ -1,0 +1,30 @@
+<resources>
+    <string name="notes_create_content_description">Создать заметку</string>
+    <string name="notes_delete_mode_content_description">Включить режим удаления</string>
+    <string name="notes_delete_mode_done_content_description">Завершить режим удаления</string>
+    <string name="notes_delete_content_description">Удалить заметку</string>
+    <string name="notes_sort_content_description">Сортировка заметок</string>
+    <string name="notes_sort_newest">Сначала новые</string>
+    <string name="notes_sort_oldest">Сначала старые</string>
+    <string name="notes_empty">Заметок пока нет</string>
+    <string name="notes_empty_search">По вашему запросу заметки не найдены</string>
+    <string name="notes_empty_body">Нет текста</string>
+    <string name="notes_load_error">Не удалось загрузить заметки</string>
+
+    <string name="note_editor_title">Заметка</string>
+    <string name="note_editor_back_content_description">Вернуться назад</string>
+    <string name="note_editor_title_label">Заголовок</string>
+    <string name="note_editor_text_label">Текст</string>
+    <string name="note_editor_title_required">Введите заголовок заметки</string>
+    <string name="note_editor_add_photo">Добавить фото</string>
+    <string name="note_editor_remove_photo">Удалить фото</string>
+    <string name="note_editor_choose_gallery">Выбрать из галереи</string>
+    <string name="note_editor_use_camera">Сделать фото</string>
+    <string name="note_editor_start_recording">Начать голосовой ввод</string>
+    <string name="note_editor_stop_recording">Остановить запись</string>
+    <string name="note_editor_voice_processing">Распознаём голосовую запись</string>
+    <string name="note_editor_voice_error">Не удалось обработать голосовую запись</string>
+    <string name="note_editor_clear_voice_error_content_description">Скрыть сообщение об ошибке голосового ввода</string>
+    <string name="note_editor_save">Сохранить</string>
+    <string name="note_editor_save_error">Не удалось сохранить заметку</string>
+</resources>
