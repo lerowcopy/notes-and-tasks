@@ -3,6 +3,8 @@ agp = "9.3.1"
 androidxActivity = "1.13.0"
 compileSdk = "37"
 composeBom = "2026.08.00"
+coroutines = "1.11.0"
+javaxInject = "1"
 kotlin = "2.3.21"
 minSdk = "26"
 targetSdk = "37"
@@ -14,6 +16,8 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
