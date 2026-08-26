@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_confirm">Подтвердить</string>
+    <string name="action_retry">Повторить</string>
+    <string name="error_default_message">Не удалось выполнить операцию</string>
+    <string name="search_action_label">Искать</string>
+    <string name="search_content_description">Запустить поиск</string>
+</resources>
