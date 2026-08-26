@@ -3,6 +3,7 @@ package ru.avito.notesandtasks.core.ui.theme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import ru.avito.notesandtasks.core.common.settings.AccentColor
 import ru.avito.notesandtasks.core.ui.components.SearchTopBar
 
 @Preview(name = "Blue light")

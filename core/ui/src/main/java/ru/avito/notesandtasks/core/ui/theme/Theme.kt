@@ -9,14 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
-enum class AccentColor {
-    BLUE,
-    VIOLET,
-    GREEN,
-    ORANGE,
-    RED,
-}
+import ru.avito.notesandtasks.core.common.settings.AccentColor
 
 /**
  * Каждая ветка возвращает полный [ColorScheme] через фабрики Material 3. Меняются только
