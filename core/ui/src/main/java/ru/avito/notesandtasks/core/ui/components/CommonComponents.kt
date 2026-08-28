@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -17,7 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -135,9 +136,8 @@ fun ConfirmDialog(
 }
 
 /**
- * Поле поиска передаёт изменённый текст отдельно от явно подтверждённого запроса. Вызов
- * [onSearch] происходит только по нажатию иконки или IME Search, поэтому фильтрация не
- * запускается на каждый символ.
+ * Поле поиска передаёт изменённый текст отдельно от [onSearch]. Feature ViewModel выполняет
+ * фильтрацию через debounced query-flow, а [onSearch] остаётся явным событием кнопки и IME Search.
  */
 @Composable
 fun SearchTopBar(
@@ -146,13 +146,32 @@ fun SearchTopBar(
     onSearch: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    TextField(
+    OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = Spacing.large, vertical = Spacing.small),
         placeholder = {
             Text(text = stringResource(R.string.search_action_label))
         },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Outlined.Search,
+                contentDescription = null,
+            )
+        },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Clear,
+                        contentDescription = stringResource(R.string.search_clear_content_description),
+                    )
+                }
+            }
+        },
+        shape = MaterialTheme.shapes.extraLarge,
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(
@@ -160,13 +179,5 @@ fun SearchTopBar(
                 onSearch(query)
             },
         ),
-        trailingIcon = {
-            IconButton(onClick = { onSearch(query) }) {
-                Icon(
-                    imageVector = Icons.Outlined.Search,
-                    contentDescription = stringResource(R.string.search_content_description),
-                )
-            }
-        },
     )
 }
