@@ -5,17 +5,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.avito.notesandtasks.core.common.flow.SortOrder
@@ -35,13 +31,13 @@ data class NotesListUiState(
     val error: Throwable? = null,
 )
 
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class NotesListViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase,
 ) : ViewModel() {
-    private val queryDraft = MutableStateFlow("")
+    private val submittedQuery = MutableStateFlow("") //
     private val sortOrder = MutableStateFlow(SortOrder.NEWEST_FIRST)
     private val mutableUiState = MutableStateFlow(NotesListUiState())
     private var notesObservation: Job? = null
@@ -53,7 +49,6 @@ class NotesListViewModel @Inject constructor(
     }
 
     fun onQueryChange(query: String) {
-        queryDraft.value = query
         mutableUiState.value = mutableUiState.value.copy(queryDraft = query)
     }
 
@@ -91,15 +86,7 @@ class NotesListViewModel @Inject constructor(
     private fun observeNotes() {
         notesObservation?.cancel()
         notesObservation = viewModelScope.launch {
-            combine(
-                queryDraft
-                    .debounce(350L)
-                    .distinctUntilChanged()
-                    .onEach { query ->
-                        mutableUiState.value = mutableUiState.value.copy(submittedQuery = query)
-                    },
-                sortOrder,
-            ) { query, order ->
+            combine(submittedQuery, sortOrder) { query, order ->
                 GetNotesParams(query = query, sortOrder = order)
             }.flatMapLatest { params ->
                 getNotesUseCase(params)

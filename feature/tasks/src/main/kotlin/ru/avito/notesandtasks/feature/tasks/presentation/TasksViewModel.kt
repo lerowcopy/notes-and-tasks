@@ -7,17 +7,13 @@ import androidx.lifecycle.viewModelScope
 import java.io.File
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.avito.notesandtasks.core.common.flow.SortOrder
@@ -62,7 +58,7 @@ sealed interface VoiceTaskState {
     ) : VoiceTaskState
 }
 
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     private val getTasksUseCase: GetTasksUseCase,
@@ -71,7 +67,7 @@ class TasksViewModel @Inject constructor(
     private val createTaskFromVoiceUseCase: CreateTaskFromVoiceUseCase,
     private val voiceRecorder: VoiceRecorder,
 ) : ViewModel() {
-    private val queryDraft = MutableStateFlow("")
+    private val submittedQuery = MutableStateFlow("")
     private val selectedFilter = MutableStateFlow(TaskStatusFilter.All)
     private val selectedSortOrder = MutableStateFlow(SortOrder.NEWEST_FIRST)
     private val mutableUiState = MutableStateFlow(TasksUiState())
@@ -84,7 +80,6 @@ class TasksViewModel @Inject constructor(
     }
 
     fun onQueryChange(query: String) {
-        queryDraft.value = query
         updateState { copy(queryDraft = query) }
     }
 
@@ -129,7 +124,13 @@ class TasksViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            updateState { copy(isTextEntrySaving = true, isTextEntryError = false, operationError = null) }
+            updateState {
+                copy(
+                    isTextEntrySaving = true,
+                    isTextEntryError = false,
+                    operationError = null
+                )
+            }
             when (val result = createTaskUseCase(title)) {
                 is OperationResult.Success -> updateState {
                     copy(
@@ -159,7 +160,8 @@ class TasksViewModel @Inject constructor(
         isCompleted: Boolean,
     ) {
         viewModelScope.launch {
-            when (val result = toggleTaskStatusUseCase(ToggleTaskStatusParams(taskId, isCompleted))) {
+            when (val result =
+                toggleTaskStatusUseCase(ToggleTaskStatusParams(taskId, isCompleted))) {
                 is OperationResult.Success -> Unit
                 is OperationResult.Error -> updateState {
                     copy(operationError = result.cause ?: TaskOperationFailedException)
@@ -173,7 +175,11 @@ class TasksViewModel @Inject constructor(
         when (val result = voiceRecorder.start()) {
             is OperationResult.Success -> updateState { copy(voiceState = VoiceTaskState.Recording) }
             is OperationResult.Error -> updateState {
-                copy(voiceState = VoiceTaskState.Error(result.cause ?: VoiceTaskCreationFailedException))
+                copy(
+                    voiceState = VoiceTaskState.Error(
+                        result.cause ?: VoiceTaskCreationFailedException
+                    )
+                )
             }
         }
     }
@@ -182,7 +188,11 @@ class TasksViewModel @Inject constructor(
         when (val result = voiceRecorder.stop()) {
             is OperationResult.Success -> createTaskFromVoice(File(result.data))
             is OperationResult.Error -> updateState {
-                copy(voiceState = VoiceTaskState.Error(result.cause ?: VoiceTaskCreationFailedException))
+                copy(
+                    voiceState = VoiceTaskState.Error(
+                        result.cause ?: VoiceTaskCreationFailedException
+                    )
+                )
             }
         }
     }
@@ -207,16 +217,7 @@ class TasksViewModel @Inject constructor(
     private fun observeTasks() {
         tasksObservation?.cancel()
         tasksObservation = viewModelScope.launch {
-            combine(
-                queryDraft
-                    .debounce(350L)
-                    .distinctUntilChanged()
-                    .onEach { query ->
-                        updateState { copy(submittedQuery = query) }
-                    },
-                selectedFilter,
-                selectedSortOrder,
-            ) { query, filter, sortOrder ->
+            combine(submittedQuery, selectedFilter, selectedSortOrder) { query, filter, sortOrder ->
                 GetTasksParams(query = query, filter = filter, sortOrder = sortOrder)
             }.flatMapLatest { parameters ->
                 getTasksUseCase(parameters)
@@ -237,7 +238,11 @@ class TasksViewModel @Inject constructor(
                 when (val result = createTaskFromVoiceUseCase(audioFile)) {
                     is OperationResult.Success -> updateState { copy(voiceState = VoiceTaskState.Idle) }
                     is OperationResult.Error -> updateState {
-                        copy(voiceState = VoiceTaskState.Error(result.cause ?: VoiceTaskCreationFailedException))
+                        copy(
+                            voiceState = VoiceTaskState.Error(
+                                result.cause ?: VoiceTaskCreationFailedException
+                            )
+                        )
                     }
                 }
             } catch (error: CancellationException) {

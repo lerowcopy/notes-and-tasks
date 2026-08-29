@@ -6,5 +6,4 @@
     <string name="error_default_message">Не удалось выполнить операцию</string>
     <string name="search_action_label">Искать</string>
     <string name="search_content_description">Запустить поиск</string>
-    <string name="search_clear_content_description">Очистить поиск</string>
 </resources>
